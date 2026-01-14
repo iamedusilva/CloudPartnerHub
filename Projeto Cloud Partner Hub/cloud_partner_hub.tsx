@@ -1785,6 +1785,10 @@ const WizardViewComponent = React.memo(({ formData, handleInputChange, step, nex
                </button>
                <button 
                  onClick={() => {
+                   if (!formData?.companyName?.trim()) {
+                     alert('Por favor, preencha a Razão Social antes de salvar.');
+                     return;
+                   }
                    savePartner(formData);
                    setShowAccountSettings(false);
                  }}
@@ -2355,7 +2359,7 @@ const WizardViewComponent = React.memo(({ formData, handleInputChange, step, nex
                        <Button onClick={async () => {
                          try {
                            // Salvar dados no banco antes de gerar o PDF
-                           if (formData && formData.email) {
+                           if (formData && formData.email && formData.companyName?.trim()) {
                              const updatedData = { 
                                ...formData, 
                                status: 'Completed',
@@ -2364,6 +2368,9 @@ const WizardViewComponent = React.memo(({ formData, handleInputChange, step, nex
                              await savePartner(updatedData);
                              console.log('Dados salvos com sucesso no banco!');
                              alert('Planejamento concluído e salvo com sucesso!');
+                           } else {
+                             alert('Preencha a Razão Social e Email antes de concluir.');
+                             return;
                            }
                            // Gerar PDF
                            generateAssessmentPDF(formData);

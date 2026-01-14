@@ -1,7 +1,23 @@
-// @ts-ignore - Vite env variable
-// Em produção (mesmo servidor), usa URL relativa. Em desenvolvimento, usa localhost:3001
-const isDevelopment = import.meta.env?.DEV === true || window.location.hostname === 'localhost';
-const API_BASE_URL = import.meta.env?.VITE_API_URL || (isDevelopment ? 'http://localhost:3001/api' : '/api');
+// Detecta se está em desenvolvimento ou produção
+// Produção: usa URL relativa /api (mesmo servidor)
+// Desenvolvimento: usa localhost:3001
+const getApiBaseUrl = (): string => {
+  // Se tiver variável de ambiente, usa ela
+  if (import.meta.env?.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL as string;
+  }
+  
+  // Se está rodando em localhost, usa servidor de desenvolvimento
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3001/api';
+  }
+  
+  // Em produção (Azure, etc), usa URL relativa
+  return '/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const toFriendlyApiError = (err: unknown): Error => {
   const message = err instanceof Error ? err.message : String(err);
