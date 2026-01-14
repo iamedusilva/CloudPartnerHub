@@ -1,7 +1,7 @@
 // @ts-ignore - Vite env variable
 // Em produção (mesmo servidor), usa URL relativa. Em desenvolvimento, usa localhost:3001
-const API_BASE_URL = import.meta.env?.VITE_API_URL || 
-  (import.meta.env?.PROD ? '/api' : 'http://localhost:3001/api');
+const isDevelopment = import.meta.env?.DEV === true || window.location.hostname === 'localhost';
+const API_BASE_URL = import.meta.env?.VITE_API_URL || (isDevelopment ? 'http://localhost:3001/api' : '/api');
 
 const toFriendlyApiError = (err: unknown): Error => {
   const message = err instanceof Error ? err.message : String(err);
@@ -9,7 +9,7 @@ const toFriendlyApiError = (err: unknown): Error => {
   if (/Failed to fetch/i.test(message) || /NetworkError/i.test(message)) {
     return new Error(
       `Não foi possível conectar à API (${API_BASE_URL}). ` +
-        `Verifique se o backend está rodando em http://localhost:3001 (endpoint /api/health).`
+        `Verifique se o backend está disponível.`
     );
   }
   return err instanceof Error ? err : new Error(message);
