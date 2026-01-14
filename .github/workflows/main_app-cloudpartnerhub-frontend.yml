@@ -25,22 +25,26 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'Projeto Cloud Partner Hub/package.json'
 
+      - name: Install Frontend Dependencies
+        working-directory: 'Projeto Cloud Partner Hub'
+        run: |
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+
       - name: Build Frontend
         working-directory: 'Projeto Cloud Partner Hub'
         run: |
-          npm install --legacy-peer-deps
           npm run build
-
-      - name: Install Server Dependencies
-        working-directory: 'Projeto Cloud Partner Hub/server'
-        run: |
-          npm install --production
 
       - name: Prepare Deployment Package
         working-directory: 'Projeto Cloud Partner Hub'
         run: |
           mkdir -p server/public
           cp -r dist/* server/public/
+
+      - name: Install Server Dependencies
+        working-directory: 'Projeto Cloud Partner Hub/server'
+        run: |
+          npm ci --production --legacy-peer-deps || npm install --production --legacy-peer-deps
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
